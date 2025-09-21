@@ -36,7 +36,7 @@ export default function LogoutButton({ className = "" }: { className?: string })
   return (
     <button 
       onClick={handleLogout}
-      className={`text-gray-600 hover:text-gray-900 transition-colors duration-200 ${className}`}
+      className={`bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold ${className}`}
       type="button"
     >
       Sign Out
