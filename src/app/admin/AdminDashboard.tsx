@@ -9,6 +9,7 @@ import BulkActions from './BulkActions'
 import EnhancedStats from './EnhancedStats'
 import AdminAlerts from './AdminAlerts'
 import QuickActions from './QuickActions'
+import LogoutButton from '@/components/LogoutButton'
 
 type PostStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 
@@ -218,11 +219,7 @@ export default function AdminDashboard({ session, posts, stats }: AdminDashboard
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-600">Admin: {session.user.name}</span>
-              <form action="/api/auth/signout" method="post">
-                <button type="submit" className="text-gray-600 hover:text-gray-900">
-                  Sign Out
-                </button>
-              </form>
+              <LogoutButton />
             </div>
           </div>
         </div>

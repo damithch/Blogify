@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import LogoutButton from "@/components/LogoutButton"
 
 async function getUserPosts(userId: string) {
   return await prisma.post.findMany({
@@ -46,11 +47,7 @@ export default async function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-600">Welcome, {session.user.name}</span>
-              <form action="/api/auth/signout" method="post">
-                <button type="submit" className="text-gray-600 hover:text-gray-900">
-                  Sign Out
-                </button>
-              </form>
+              <LogoutButton />
             </div>
           </div>
         </div>

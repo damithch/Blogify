@@ -11,12 +11,68 @@ export default function AdminSignUp() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
   const router = useRouter()
+
+  // Email validation
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  // Password validation
+  const validatePassword = (password: string) => {
+    return password.length >= 8
+  }
+
+  // Real-time validation
+  const validateField = (field: string, value: string) => {
+    const errors = { ...validationErrors }
+    
+    switch (field) {
+      case 'email':
+        if (value && !validateEmail(value)) {
+          errors.email = 'Please enter a valid email address'
+        } else {
+          delete errors.email
+        }
+        break
+      case 'password':
+        if (value && !validatePassword(value)) {
+          errors.password = 'Password must be at least 8 characters long'
+        } else {
+          delete errors.password
+        }
+        break
+      case 'confirmPassword':
+        if (value && value !== password) {
+          errors.confirmPassword = 'Passwords do not match'
+        } else {
+          delete errors.confirmPassword
+        }
+        break
+    }
+    
+    setValidationErrors(errors)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+
+    // Final validation
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address')
+      setIsLoading(false)
+      return
+    }
+
+    if (!validatePassword(password)) {
+      setError('Password must be at least 8 characters long')
+      setIsLoading(false)
+      return
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match')
@@ -33,14 +89,15 @@ export default function AdminSignUp() {
         body: JSON.stringify({ name, email, password }),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
-        router.push('/auth/signin?message=Admin account created! Sign in to access the admin panel')
+        router.push('/auth/signin?message=Admin account created successfully! Please sign in to access the admin panel.')
       } else {
-        const data = await response.json()
         setError(data.error || 'Something went wrong')
       }
     } catch {
-      setError('Something went wrong')
+      setError('Network error. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -69,9 +126,13 @@ export default function AdminSignUp() {
                 type="text"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  if (error) setError('') // Clear main error on input
+                }}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Full name"
+                minLength={2}
               />
             </div>
             <div>
@@ -79,30 +140,52 @@ export default function AdminSignUp() {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  validateField('email', e.target.value)
+                  if (error) setError('')
+                }}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${validationErrors.email ? 'border-red-300' : 'border-gray-300'}`}
                 placeholder="Admin email address"
               />
+              {validationErrors.email && (
+                <p className="text-red-500 text-xs mt-1 px-3">{validationErrors.email}</p>
+              )}
             </div>
             <div>
               <input
                 type="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  validateField('password', e.target.value)
+                  if (confirmPassword) validateField('confirmPassword', confirmPassword)
+                  if (error) setError('')
+                }}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${validationErrors.password ? 'border-red-300' : 'border-gray-300'}`}
+                placeholder="Password (min 8 characters)"
               />
+              {validationErrors.password && (
+                <p className="text-red-500 text-xs mt-1 px-3">{validationErrors.password}</p>
+              )}
             </div>
             <div>
               <input
                 type="password"
                 required
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value)
+                  validateField('confirmPassword', e.target.value)
+                  if (error) setError('')
+                }}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${validationErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'}`}
                 placeholder="Confirm password"
               />
+              {validationErrors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1 px-3">{validationErrors.confirmPassword}</p>
+              )}
             </div>
           </div>
 
@@ -115,10 +198,20 @@ export default function AdminSignUp() {
           <div>
             <button
               type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              disabled={isLoading || Object.keys(validationErrors).length > 0 || !name || !email || !password || !confirmPassword}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Creating admin account...' : '👑 Create Admin Account'}
+              {isLoading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating admin account...
+                </span>
+              ) : (
+                '👑 Create Admin Account'
+              )}
             </button>
           </div>
 
