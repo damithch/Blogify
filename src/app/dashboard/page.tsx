@@ -1,24 +1,92 @@
-import { auth } from "@/auth"
-import { prisma } from "@/lib/prisma"
-import { redirect } from "next/navigation"
+'use client'
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import LogoutButton from "@/components/LogoutButton"
+import { useSession } from "next-auth/react"
 
-async function getUserPosts(userId: string) {
-  return await prisma.post.findMany({
-    where: { authorId: userId },
-    orderBy: { createdAt: 'desc' }
-  })
+interface Post {
+  id: string
+  title: string
+  content: string
+  status: string
+  createdAt: string
+  updatedAt: string
 }
 
-export default async function Dashboard() {
-  const session = await auth()
-  
-  if (!session) {
-    redirect('/auth/signin')
+export default function Dashboard() {
+  const { data: session, status } = useSession()
+  const [posts, setPosts] = useState<Post[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === "loading") return
+    if (!session) {
+      router.push('/auth/signin')
+      return
+    }
+
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch('/api/posts')
+        if (response.ok) {
+          const data = await response.json()
+          setPosts(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch posts:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPosts()
+  }, [session, status, router])
+
+  const handleDelete = async (postId: string, postTitle: string) => {
+    if (!confirm(`Are you sure you want to delete "${postTitle}"? This action cannot be undone.`)) {
+      return
+    }
+
+    setIsDeleting(postId)
+
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        // Remove the deleted post from the local state
+        setPosts(posts.filter(post => post.id !== postId))
+      } else {
+        const data = await response.json()
+        alert(`Failed to delete post: ${data.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      alert('Failed to delete post. Please try again.')
+    } finally {
+      setIsDeleting(null)
+    }
   }
 
-  const posts = await getUserPosts(session.user.id)
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return null // Will redirect to login
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -144,8 +212,12 @@ export default async function Dashboard() {
                       >
                         Edit
                       </Link>
-                      <button className="text-red-600 hover:text-red-500 text-sm">
-                        Delete
+                      <button 
+                        onClick={() => handleDelete(post.id, post.title)}
+                        disabled={isDeleting === post.id}
+                        className="text-red-600 hover:text-red-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isDeleting === post.id ? 'Deleting...' : 'Delete'}
                       </button>
                     </div>
                   </div>
