@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function SignIn() {
@@ -10,7 +9,6 @@ export default function SignIn() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,7 +25,9 @@ export default function SignIn() {
       if (result?.error) {
         setError('Invalid credentials')
       } else {
-        router.push('/dashboard')
+        // Redirect based on user role
+        // We'll check the session after successful signin
+        window.location.href = '/auth/redirect'
       }
     } catch (err) {
       console.error(err)
@@ -83,9 +83,13 @@ export default function SignIn() {
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-2">
             <Link href="/auth/signup" className="text-indigo-600 hover:text-indigo-500">
               Don&apos;t have an account? Sign up
+            </Link>
+            <br />
+            <Link href="/auth/admin-signup" className="text-sm text-gray-600 hover:text-gray-500">
+              👑 Create admin account
             </Link>
           </div>
         </form>
