@@ -58,11 +58,6 @@ export default function SignIn() {
       <div className="relative z-10 max-w-md w-full">
         {/* Logo/Header Section */}
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
-          </div>
           <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Blogify
           </Link>
@@ -161,7 +156,7 @@ export default function SignIn() {
               href="/auth/admin-signup" 
               className="block text-gray-500 hover:text-gray-600 text-sm transition-colors"
             >
-              👑 Create admin account
+              Create admin account
             </Link>
           </div>
         </div>
