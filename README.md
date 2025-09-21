@@ -93,6 +93,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to see your application.
 
+
 ## 📊 Database Schema
 
 ### User Table
@@ -240,10 +241,6 @@ npm run start
 3. Commit changes: `git commit -am 'Add new feature'`
 4. Push to branch: `git push origin feature-name`
 5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
