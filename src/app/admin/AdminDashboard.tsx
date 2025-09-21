@@ -6,6 +6,9 @@ import Link from 'next/link'
 import AdminPostActions from './AdminPostActions'
 import PostPreviewModal from './PostPreviewModal'
 import BulkActions from './BulkActions'
+import EnhancedStats from './EnhancedStats'
+import AdminAlerts from './AdminAlerts'
+import QuickActions from './QuickActions'
 
 type PostStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 
@@ -233,25 +236,19 @@ export default function AdminDashboard({ session, posts, stats }: AdminDashboard
           <p className="text-gray-600">Review and moderate all blog posts</p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900">Total Posts</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.total}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900">Pending Review</h3>
-            <p className="text-3xl font-bold text-yellow-600">{stats.pending}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900">Approved</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.approved}</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-medium text-gray-900">Rejected</h3>
-            <p className="text-3xl font-bold text-red-600">{stats.rejected}</p>
-          </div>
+        {/* Enhanced Stats */}
+        <div className="mb-8">
+          <EnhancedStats initialStats={stats} />
         </div>
+
+        {/* Admin Alerts */}
+        <AdminAlerts stats={stats} />
+
+        {/* Quick Actions */}
+        <QuickActions 
+          stats={stats} 
+          onFilterChange={setActiveFilterWithClearSelection} 
+        />
 
         {/* Filter Tabs */}
         <div className="bg-white rounded-lg shadow mb-6">
