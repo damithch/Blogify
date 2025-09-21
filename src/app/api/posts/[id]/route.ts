@@ -3,11 +3,12 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
     const session = await auth()
     
     if (!session) {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const post = await prisma.post.findFirst({
       where: {
-        id: params.id,
+        id,
         authorId: session.user.id // Users can only access their own posts
       }
     })
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
     const session = await auth()
     
     if (!session) {
@@ -64,7 +66,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Check if post exists and belongs to user
     const existingPost = await prisma.post.findFirst({
       where: {
-        id: params.id,
+        id,
         authorId: session.user.id
       }
     })
@@ -77,7 +79,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title,
         content,
@@ -101,6 +103,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
     const session = await auth()
     
     if (!session) {
@@ -113,7 +116,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     // Check if post exists and belongs to user
     const existingPost = await prisma.post.findFirst({
       where: {
-        id: params.id,
+        id,
         authorId: session.user.id
       }
     })
@@ -126,7 +129,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     await prisma.post.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({

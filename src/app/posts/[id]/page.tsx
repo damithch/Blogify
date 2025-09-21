@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 interface PostPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 async function getPost(id: string) {
@@ -21,7 +21,8 @@ async function getPost(id: string) {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPost(params.id)
+  const { id } = await params
+  const post = await getPost(id)
 
   if (!post) {
     notFound()

@@ -3,11 +3,12 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 
 interface RouteParams {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
     const session = await auth()
     
     // Check if user is authenticated and has admin role
@@ -30,7 +31,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // Check if post exists
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { author: { select: { name: true, email: true } } }
     })
 
@@ -43,7 +44,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // Update post status
     const updatedPost = await prisma.post.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         status,
         updatedAt: new Date()
@@ -72,6 +73,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
     const session = await auth()
     
     // Check if user is authenticated and has admin role
@@ -84,7 +86,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     // Get post details for admin view
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { 
         author: { 
           select: { 
@@ -116,6 +118,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const { id } = await params
     const session = await auth()
     
     // Check if user is authenticated and has admin role
@@ -128,7 +131,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     // Check if post exists
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
 
     if (!existingPost) {
@@ -140,7 +143,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     // Delete the post
     await prisma.post.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({

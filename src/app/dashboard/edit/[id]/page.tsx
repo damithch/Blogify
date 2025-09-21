@@ -1,14 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 interface EditPostProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default function EditPost({ params }: EditPostProps) {
+  const resolvedParams = use(params)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -19,7 +20,7 @@ export default function EditPost({ params }: EditPostProps) {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/posts/${params.id}`)
+        const response = await fetch(`/api/posts/${resolvedParams.id}`)
         if (response.ok) {
           const post = await response.json()
           setTitle(post.title)
@@ -35,7 +36,7 @@ export default function EditPost({ params }: EditPostProps) {
     }
     
     fetchPost()
-  }, [params.id])
+  }, [resolvedParams.id])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,7 +50,7 @@ export default function EditPost({ params }: EditPostProps) {
     }
 
     try {
-      const response = await fetch(`/api/posts/${params.id}`, {
+      const response = await fetch(`/api/posts/${resolvedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
