@@ -104,95 +104,159 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value)
-                  if (error) setError('') // Clear main error on input
-                }}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Full name"
-                minLength={2}
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  validateField('email', e.target.value)
-                  if (error) setError('')
-                }}
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${validationErrors.email ? 'border-red-300' : 'border-gray-300'}`}
-                placeholder="Email address"
-              />
-              {validationErrors.email && (
-                <p className="text-red-500 text-xs mt-1 px-3">{validationErrors.email}</p>
-              )}
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
-                  validateField('password', e.target.value)
-                  if (confirmPassword) validateField('confirmPassword', confirmPassword)
-                  if (error) setError('')
-                }}
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${validationErrors.password ? 'border-red-300' : 'border-gray-300'}`}
-                placeholder="Password (min 8 characters)"
-              />
-              {validationErrors.password && (
-                <p className="text-red-500 text-xs mt-1 px-3">{validationErrors.password}</p>
-              )}
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value)
-                  validateField('confirmPassword', e.target.value)
-                  if (error) setError('')
-                }}
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${validationErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'}`}
-                placeholder="Confirm password"
-              />
-              {validationErrors.confirmPassword && (
-                <p className="text-red-500 text-xs mt-1 px-3">{validationErrors.confirmPassword}</p>
-              )}
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      {/* Background Pattern Overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27 width=%2732%27 height=%2732%27 fill=%27none%27 stroke=%27rgb(15 23 42 / 0.04)%27%3e%3cpath d=%27m0 0.5 32 0M0.5 0v32%27/%3e%3c/svg%3e')] opacity-40"></div>
+      
+      <div className="relative z-10 max-w-md w-full">
+        {/* Logo/Header Section */}
+        <div className="text-center mb-8">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
           </div>
+          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Blogify
+          </Link>
+          <h2 className="mt-4 text-3xl font-bold text-gray-900">
+            Join our community
+          </h2>
+          <p className="mt-2 text-gray-600">
+            Start your writing journey with us today
+          </p>
+        </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
-          )}
+        {/* Form Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value)
+                    if (error) setError('')
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                  placeholder="Enter your full name"
+                  minLength={2}
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    validateField('email', e.target.value)
+                    if (error) setError('')
+                  }}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm ${
+                    validationErrors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your email"
+                />
+                {validationErrors.email && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {validationErrors.email}
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    validateField('password', e.target.value)
+                    if (confirmPassword) validateField('confirmPassword', confirmPassword)
+                    if (error) setError('')
+                  }}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm ${
+                    validationErrors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Create a strong password"
+                />
+                {validationErrors.password && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {validationErrors.password}
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value)
+                    validateField('confirmPassword', e.target.value)
+                    if (error) setError('')
+                  }}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm ${
+                    validationErrors.confirmPassword ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
+                  }`}
+                  placeholder="Confirm your password"
+                />
+                {validationErrors.confirmPassword && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {validationErrors.confirmPassword}
+                  </p>
+                )}
+              </div>
+            </div>
 
-          <div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {error}
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={isLoading || Object.keys(validationErrors).length > 0 || !name || !email || !password || !confirmPassword}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
-                <span className="flex items-center">
+                <span className="flex items-center justify-center">
                   <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -200,17 +264,21 @@ export default function SignUp() {
                   Creating account...
                 </span>
               ) : (
-                'Create account'
+                'Create Account'
               )}
             </button>
-          </div>
+          </form>
 
-          <div className="text-center">
-            <Link href="/auth/signin" className="text-indigo-600 hover:text-indigo-500">
+          {/* Links */}
+          <div className="mt-6 text-center">
+            <Link 
+              href="/auth/signin" 
+              className="text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
+            >
               Already have an account? Sign in
             </Link>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   )
