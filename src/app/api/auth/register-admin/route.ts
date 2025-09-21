@@ -1,80 +1,35 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { hashPassword } from '@/lib/auth'
+import { NextResponse } from 'next/server'
 
-export async function POST(request: NextRequest) {
-  try {
-    const { name, email, password } = await request.json()
+// Admin registration has been disabled for security reasons
+// Admin accounts can only be created through:
+// 1. Database seeding (npm run db:seed)
+// 2. CLI management tool (npm run admin:create)
+// 3. Direct database access
 
-    // Validation
-    if (!name || name.trim().length < 2) {
-      return NextResponse.json(
-        { error: 'Name must be at least 2 characters long' },
-        { status: 400 }
-      )
-    }
+export async function POST() {
+  return NextResponse.json(
+    { 
+      error: 'Admin registration is disabled for security reasons. Use CLI tools or database seeding to create admin accounts.',
+      methods: [
+        'Database seeding: npm run db:seed',
+        'CLI management: npm run admin:create',
+        'Direct database access (emergency only)'
+      ]
+    },
+    { status: 403 }
+  )
+}
 
-    if (!email || !email.includes('@')) {
-      return NextResponse.json(
-        { error: 'Please provide a valid email address' },
-        { status: 400 }
-      )
-    }
-
-    if (!password || password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters long' },
-        { status: 400 }
-      )
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
-    })
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'An account with this email already exists' },
-        { status: 400 }
-      )
-    }
-
-    // Hash password
-    const hashedPassword = await hashPassword(password)
-
-    // Create admin user
-    const admin = await prisma.user.create({
-      data: {
-        name: name.trim(),
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        role: 'ADMIN' // This is the key difference - creates ADMIN instead of USER
-      }
-    })
-
-    return NextResponse.json(
-      { 
-        message: 'Admin user created successfully', 
-        userId: admin.id,
-        role: admin.role 
-      },
-      { status: 201 }
-    )
-  } catch (error) {
-    console.error('Admin registration error:', error)
-    
-    // Handle Prisma unique constraint errors
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return NextResponse.json(
-        { error: 'An account with this email already exists' },
-        { status: 400 }
-      )
-    }
-    
-    return NextResponse.json(
-      { error: 'Unable to create admin account. Please try again.' },
-      { status: 500 }
-    )
-  }
+export async function GET() {
+  return NextResponse.json(
+    { 
+      message: 'Admin registration endpoint is disabled',
+      availableMethods: [
+        'Database seeding with environment variables',
+        'CLI management tool',
+        'Direct database manipulation'
+      ]
+    },
+    { status: 200 }
+  )
 }

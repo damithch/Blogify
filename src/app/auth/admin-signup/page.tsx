@@ -1,108 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function AdminSignUp() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
-  const router = useRouter()
-
-  // Email validation
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
-
-  // Password validation
-  const validatePassword = (password: string) => {
-    return password.length >= 8
-  }
-
-  // Real-time validation
-  const validateField = (field: string, value: string) => {
-    const errors = { ...validationErrors }
-    
-    switch (field) {
-      case 'email':
-        if (value && !validateEmail(value)) {
-          errors.email = 'Please enter a valid email address'
-        } else {
-          delete errors.email
-        }
-        break
-      case 'password':
-        if (value && !validatePassword(value)) {
-          errors.password = 'Password must be at least 8 characters long'
-        } else {
-          delete errors.password
-        }
-        break
-      case 'confirmPassword':
-        if (value && value !== password) {
-          errors.confirmPassword = 'Passwords do not match'
-        } else {
-          delete errors.confirmPassword
-        }
-        break
-    }
-    
-    setValidationErrors(errors)
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-
-    // Final validation
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address')
-      setIsLoading(false)
-      return
-    }
-
-    if (!validatePassword(password)) {
-      setError('Password must be at least 8 characters long')
-      setIsLoading(false)
-      return
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      setIsLoading(false)
-      return
-    }
-
-    try {
-      const response = await fetch('/api/auth/register-admin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        router.push('/auth/signin?message=Admin account created successfully! Please sign in to access the admin panel.')
-      } else {
-        setError(data.error || 'Something went wrong')
-      }
-    } catch {
-      setError('Network error. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       {/* Background Pattern Overlay */}
@@ -115,164 +15,55 @@ export default function AdminSignUp() {
             Blogify
           </Link>
           <h2 className="mt-4 text-3xl font-bold text-gray-900">
-            Admin Registration
+            Admin Access Restricted
           </h2>
           <p className="mt-2 text-gray-600">
-            Create an administrator account with full access privileges
+            This system uses hardcoded admin credentials for security
           </p>
         </div>
 
-        {/* Form Card */}
+        {/* Security Notice Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
+          {/* Security Warning */}
+          <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl text-sm mb-6">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <strong>Security Notice:</strong> This system uses hardcoded admin credentials set via environment variables.
+            </div>
+          </div>
+
+          <div className="space-y-4 text-gray-600">
+            <div className="flex items-start space-x-3">
+              <svg className="w-5 h-5 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value)
-                    if (error) setError('')
-                  }}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm"
-                  placeholder="Enter your full name"
-                  minLength={2}
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Admin Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value)
-                    validateField('email', e.target.value)
-                    if (error) setError('')
-                  }}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                    validationErrors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter your admin email"
-                />
-                {validationErrors.email && (
-                  <p className="text-red-500 text-sm mt-1 flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {validationErrors.email}
-                  </p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    validateField('password', e.target.value)
-                    if (confirmPassword) validateField('confirmPassword', confirmPassword)
-                    if (error) setError('')
-                  }}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                    validationErrors.password ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="Create a secure password"
-                />
-                {validationErrors.password && (
-                  <p className="text-red-500 text-sm mt-1 flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {validationErrors.password}
-                  </p>
-                )}
-              </div>
-              
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value)
-                    validateField('confirmPassword', e.target.value)
-                    if (error) setError('')
-                  }}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                    validationErrors.confirmPassword ? 'border-red-300 focus:ring-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="Confirm your password"
-                />
-                {validationErrors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1 flex items-center">
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {validationErrors.confirmPassword}
-                  </p>
-                )}
+                <h4 className="font-medium text-gray-900">Hardcoded Admin Credentials</h4>
+                <p className="text-sm">Admin credentials are set via environment variables (ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_NAME).</p>
               </div>
             </div>
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {error}
-                </div>
-              </div>
-            )}
-
-            {/* Admin Warning */}
-            <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-xl text-sm">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                Admin accounts have full access to all content and user management features.
+            <div className="flex items-start space-x-3">
+              <svg className="w-5 h-5 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+              </svg>
+              <div>
+                <h4 className="font-medium text-gray-900">Database Seeding</h4>
+                <p className="text-sm">The admin account is automatically created during database seeding process.</p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-1 block">npm run db:seed</code>
               </div>
             </div>
+          </div>
 
-            <button
-              type="submit"
-              disabled={isLoading || Object.keys(validationErrors).length > 0 || !name || !email || !password || !confirmPassword}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Creating admin account...
-                </span>
-              ) : (
-                'Create Admin Account'
-              )}
-            </button>
-          </form>
+          {/* Contact Information */}
+          <div className="mt-6 p-4 bg-gray-50 rounded-xl">
+            <h4 className="font-medium text-gray-900 mb-2">Need Admin Access?</h4>
+            <p className="text-sm text-gray-600">
+              Contact your system administrator or use the CLI tools if you have server access.
+            </p>
+          </div>
 
           {/* Links */}
           <div className="mt-6 text-center space-y-3">
@@ -280,13 +71,13 @@ export default function AdminSignUp() {
               href="/auth/signin" 
               className="block text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
             >
-              Already have an account? Sign in
+              Sign in to existing account
             </Link>
             <Link 
               href="/auth/signup" 
               className="block text-gray-500 hover:text-gray-600 text-sm transition-colors"
             >
-              Create regular user account instead
+              Create regular user account
             </Link>
           </div>
         </div>

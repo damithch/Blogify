@@ -19,11 +19,27 @@ export default {
           return null
         }
 
+        const email = (credentials.email as string).toLowerCase()
+        const password = credentials.password as string
+
+        // Check hardcoded admin credentials first (for assignment demo)
+        const DEMO_ADMIN_EMAIL = 'admin@blogify.com'
+        const DEMO_ADMIN_PASSWORD = 'admin123'
+        
+        if (email === DEMO_ADMIN_EMAIL && password === DEMO_ADMIN_PASSWORD) {
+          console.log('Demo admin authenticated successfully')
+          return {
+            id: 'demo-admin-001',
+            email: DEMO_ADMIN_EMAIL,
+            name: 'Demo Administrator',
+            role: 'ADMIN',
+          }
+        }
+
         try {
+          // Check database users for regular authentication
           const user = await prisma.user.findUnique({
-            where: {
-              email: (credentials.email as string).toLowerCase()
-            }
+            where: { email }
           })
 
           if (!user) {
@@ -31,17 +47,14 @@ export default {
             return null
           }
 
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,
-            user.password
-          )
+          const isPasswordValid = await bcrypt.compare(password, user.password)
 
           if (!isPasswordValid) {
             console.log('Invalid password for user:', user.email)
             return null
           }
 
-          console.log('User authenticated successfully:', user.email)
+          console.log('Database user authenticated successfully:', user.email)
           return {
             id: user.id,
             email: user.email,

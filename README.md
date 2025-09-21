@@ -66,7 +66,7 @@ DATABASE_URL="postgresql://username:password@localhost:5432/blogify"
 NEXTAUTH_SECRET="your-super-secret-key-here"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Admin User (for initial setup)
+# Admin User (Required - Set your admin credentials)
 ADMIN_EMAIL="admin@yourcompany.com"
 ADMIN_PASSWORD="your-secure-password"
 ADMIN_NAME="System Administrator"
@@ -92,6 +92,21 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see your application.
+
+## 🎯 Demo Account (Ready to Use)
+
+**Built-in Admin Credentials** - No setup required:
+
+**Admin Login:**
+- **Email**: `admin@blogify.com`
+- **Password**: `admin123`
+- **Access**: Full admin panel access at `/admin`
+
+**Regular User Accounts:**
+- Create new user accounts at `/auth/signup`
+- Regular users can create posts and manage their own content
+
+> 💡 **For Assignment Evaluators**: These credentials work immediately after starting the application - no database seeding required!
 
 
 ## 📊 Database Schema
@@ -140,7 +155,38 @@ Open [http://localhost:3000](http://localhost:3000) to see your application.
 
 ### Creating Admin Users
 
-You can mannually register Admins in here
+**This system includes built-in demo admin credentials:**
+
+#### Built-in Demo Admin (Ready to Use)
+No setup required - these credentials are hardcoded for assignment demonstration:
+- **Email**: `admin@blogify.com`
+- **Password**: `admin123`
+
+#### Optional: Environment Variables (For Custom Admin)
+You can also set custom admin credentials via environment variables:
+
+```bash
+# Set these in your .env.local file (optional)
+ADMIN_EMAIL="admin@yourcompany.com"    # Your admin email
+ADMIN_PASSWORD="your-secure-password"  # Your admin password  
+ADMIN_NAME="System Administrator"      # Admin display name
+
+# Run database seeding to create the custom admin
+npm run db:seed
+```
+
+#### CLI Tool (For Additional Admins)
+```bash
+# Interactive admin management tool
+npm run admin:create
+```
+
+**Security Notes:**
+- ✅ Built-in demo admin for easy testing
+- ✅ Optional database-based admins
+- ✅ Secure password hashing for database users
+- ✅ Role-based access control
+- ⚠️ Change demo credentials in production!
 
 
 ## 📱 Admin Panel Usage

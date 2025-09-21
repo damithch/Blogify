@@ -152,12 +152,6 @@ export default function SignIn() {
             >
               Don&apos;t have an account? Sign up
             </Link>
-            <Link 
-              href="/auth/admin-signup" 
-              className="block text-gray-500 hover:text-gray-600 text-sm transition-colors"
-            >
-              Create admin account
-            </Link>
           </div>
         </div>
       </div>
