@@ -2,7 +2,6 @@
 
 A modern, full-featured blog application with Content Management System capabilities, built with Next.js, featuring user authentication, post creation/editing, and a powerful admin panel for content moderation.
 
-![Blogify Screenshot](https://via.placeholder.com/800x400/4f46e5/ffffff?text=Blogify+Dashboard)
 
 ## ✨ Features
 
@@ -140,19 +139,8 @@ Open [http://localhost:3000](http://localhost:3000) to see your application.
 
 ### Creating Admin Users
 
-#### Method 1: Database Seeding (Initial Setup)
-```bash
-# Set admin credentials in .env.local
-npm run db:seed
-```
+You can mannually register Admins in here
 
-#### Method 2: Interactive CLI Tool
-```bash
-npm run admin:create
-```
-
-#### Method 3: Promote Existing User
-Use the interactive CLI tool to promote any registered user to admin.
 
 ## 📱 Admin Panel Usage
 
@@ -167,14 +155,6 @@ Use the interactive CLI tool to promote any registered user to admin.
 - **✅ Bulk Actions**: Approve, reject, or delete multiple posts
 - **👁️ Post Preview**: Review posts before making decisions
 - **📈 Real-time Updates**: Live stats and notifications
-
-## 🎨 UI/UX Features
-
-- **🎨 Modern Design**: Glassmorphism effects and gradients
-- **📱 Fully Responsive**: Mobile-first design approach
-- **⚡ Fast Loading**: Optimized with Next.js App Router
-- **🌟 Smooth Animations**: Micro-interactions and transitions
-- **♿ Accessible**: WCAG compliant components
 
 ## 🏗️ Tech Stack
 
@@ -232,15 +212,6 @@ npm run build
 npm run start
 ```
 
-## 🧪 Demo Credentials
-
-### Admin Access
-- **Email**: admin@yourcompany.com
-- **Password**: (Set in environment variables)
-
-### Test User
-Create through the signup page or use the admin panel to manage users.
-
 ## 📝 API Documentation
 
 ### Authentication Required Endpoints
@@ -280,14 +251,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Vercel** for hosting and deployment tools
 - **Prisma** for the excellent ORM
 - **NextAuth.js** for authentication solution
-
----
-
-## 📞 Support
-
-For support and questions:
-- 📧 Email: support@blogify.dev
-- 🐛 Issues: [GitHub Issues](https://github.com/damithch/Blogify/issues)
-- 📖 Documentation: [docs/ADMIN_SETUP.md](docs/ADMIN_SETUP.md)
-
-**Built with ❤️ using Next.js and modern web technologies**
