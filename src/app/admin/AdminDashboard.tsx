@@ -158,6 +158,11 @@ export default function AdminDashboard({ session, posts, stats }: AdminDashboard
     }
   }
 
+  const setActiveFilterWithClearSelection = (filter: FilterTab) => {
+    setActiveFilter(filter)
+    setSelectedPostIds([])
+  }
+
   const filteredPosts = posts.filter(post => {
     switch (activeFilter) {
       case 'pending':
@@ -255,7 +260,7 @@ export default function AdminDashboard({ session, posts, stats }: AdminDashboard
               {(['all', 'pending', 'approved', 'rejected'] as FilterTab[]).map((tab) => (
                 <button
                   key={tab}
-                  onClick={() => setActiveFilter(tab)}
+                  onClick={() => setActiveFilterWithClearSelection(tab)}
                   className={getTabStyle(tab)}
                 >
                   {getTabLabel(tab)}
@@ -277,9 +282,16 @@ export default function AdminDashboard({ session, posts, stats }: AdminDashboard
         <div className="bg-white rounded-lg shadow">
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {getTabLabel(activeFilter)}
-              </h2>
+              <div className="flex items-center space-x-4">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {getTabLabel(activeFilter)}
+                </h2>
+                {selectedPostIds.length > 0 && (
+                  <span className="text-sm text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
+                    {selectedPostIds.length} selected
+                  </span>
+                )}
+              </div>
               {filteredPosts.length > 0 && (
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
@@ -307,7 +319,18 @@ export default function AdminDashboard({ session, posts, stats }: AdminDashboard
             <div className="divide-y divide-gray-200">
               {filteredPosts.map((post) => (
                 <div key={post.id} className="p-6 hover:bg-gray-50">
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-4">
+                    {/* Checkbox */}
+                    <div className="flex-shrink-0 pt-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedPostIds.includes(post.id)}
+                        onChange={() => togglePostSelection(post.id)}
+                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                    </div>
+
+                    {/* Post Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900 truncate">
